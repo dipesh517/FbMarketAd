@@ -53,7 +53,7 @@ class CampaignList(APIView):
       params = {
         'name': request.data["name"],
         'objective': request.data["objective"],
-        'status': request.data["status"],
+        'status': "PAUSED",
         'special_ad_categories': request.data["special_ad_categories"],
       }
       return Response(data = AdAccount(id).create_campaign(

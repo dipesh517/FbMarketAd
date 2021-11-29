@@ -37,7 +37,7 @@ SPECIAL_AD_CATEGORIES_CHOICES = (
 class CampaignSerializer(serializers.Serializer):
   # initialize fields
   name = serializers.CharField()
-  status = serializers.ChoiceField(choices = CAMPAIGN_STATUS_CHOICES) 
+  # status = serializers.ChoiceField(choices = CAMPAIGN_STATUS_CHOICES) 
   objective = serializers.ChoiceField(choices = CAMPAIGN_OBJECTIVE_CHOICES)
   special_ad_categories = serializers.MultipleChoiceField(
                         choices = SPECIAL_AD_CATEGORIES_CHOICES,allow_blank= True)
