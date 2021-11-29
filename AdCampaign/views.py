@@ -11,16 +11,15 @@ from .serializers import CampaignSerializer, AccountSecretsSerializer
 from .enums import DATE_PRESET
 from .models import AccountSecrets
 
-access_token, id = None, None
-if AccountSecrets.objects.first():
-  access_token = AccountSecrets.objects.first().access_token
-  id = AccountSecrets.objects.first().account_id
-
 class CampaignList(APIView):
   """
   List all campaigns, or create a new campaign.
   """
   def get(self, request, format=None):
+    access_token, id = None, None
+    if AccountSecrets.objects.first():
+      access_token = AccountSecrets.objects.first().access_token
+      id = AccountSecrets.objects.first().account_id
     FacebookAdsApi.init(access_token=access_token)
     fields = [
       'name',
@@ -36,6 +35,7 @@ class CampaignList(APIView):
         params['date_preset'] = date_preset
 
     if request.query_params.__contains__('time_range'):
+      print(request.query_params['time_range'])
       params['time_range'] = request.query_params['time_range']
 
     return Response(data = list(AdAccount(id).get_campaigns(
@@ -44,6 +44,10 @@ class CampaignList(APIView):
     )))
 
   def post(self, request, format=None):
+    access_token, id = None, None
+    if AccountSecrets.objects.first():
+      access_token = AccountSecrets.objects.first().access_token
+      id = AccountSecrets.objects.first().account_id
     serializer = CampaignSerializer(data=request.data)
     if serializer.is_valid():
       print(request.data)
