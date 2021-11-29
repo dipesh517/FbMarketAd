@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from .models import AccountSecrets
 
 # create a tuple
 CAMPAIGN_STATUS_CHOICES =( 
@@ -41,3 +42,8 @@ class CampaignSerializer(serializers.Serializer):
   objective = serializers.ChoiceField(choices = CAMPAIGN_OBJECTIVE_CHOICES)
   special_ad_categories = serializers.MultipleChoiceField(
                         choices = SPECIAL_AD_CATEGORIES_CHOICES,allow_blank= True)
+
+class AccountSecretsSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = AccountSecrets
+    fields = ['account_id','app_id','app_secret','access_token'] 

@@ -7,15 +7,14 @@ from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign
 from facebook_business.api import FacebookAdsApi
 from rest_framework import status
-from .serializers import CampaignSerializer
+from .serializers import CampaignSerializer, AccountSecretsSerializer
 from .enums import DATE_PRESET
+from .models import AccountSecrets
 
-
-access_token = 'EAAGJ5BKkyXMBAIqkPIVjRvuMxCCiViLrVZBWHxff5uXpukwoSH71i8zU3cycS3ABNilKi37GYcvZBZBLxz6WZCDCgsTrB7AzyOa1wZBISsMFqe6VuzuAvQzwW4zZAAtPkriKlgEROm3TQhJZBwwHZA6LZAHx4bON0E1kjkuUZAAWABQzEq9lYZC5jVtXpOcuZC7L3D4hHZBlmNxr7QfdoEjdoOx6U7udXMxt9jxFJDTZBrJGWX0AZDZD'
-app_secret = '<APP_SECRET>'
-app_id = '<APP_ID>'
-id = 'act_3658962400798849'
-
+access_token, id = None, None
+if AccountSecrets.objects.first():
+  access_token = AccountSecrets.objects.first().access_token
+  id = AccountSecrets.objects.first().account_id
 
 class CampaignList(APIView):
   """
@@ -63,6 +62,27 @@ class CampaignList(APIView):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class AccountSecretsView(APIView):
+  # """
+  # List all snippets, or create a new snippet.
+  # """
+  # def get(self, request, format=None):
+  #     snippets = Snippet.objects.all()
+  #     serializer = SnippetSerializer(snippets, many=True)
+  #     return Response(serializer.data)
+
+  def post(self, request, format=None):
+    serializer = AccountSecretsSerializer(data=request.data)
+    if serializer.is_valid():
+      if AccountSecrets.objects.exists():
+        a = AccountSecrets.objects.first()
+        a.access_token = request.data["access_token"]
+        a.account_id = request.data["account_id"]
+        a.save()
+      else:
+        AccountSecrets.objects.create(access_token = request.data['access_token'], account_id = request.data['account_id'])
+      return Response({"success": "true"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CampaignDetail(APIView):
   """
