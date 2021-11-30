@@ -57,10 +57,9 @@ class CampaignSerializer(serializers.Serializer):
   # campaign_optimization_type = serializers.ChoiceField(choices = CAMPAIGN_OPTIMIZATION_TYPE_CHOICES, required = False) 
   campaign_budget_optimization = serializers.BooleanField(default = False,required = False)
   bid_strategy = serializers.ChoiceField(choices = BID_STRATEGY_TYPE_CHOICES, required = False) 
-  daily_budget = serializers.DecimalField(max_digits = 12,decimal_places=2,required = False)
-  lifetime_budget = serializers.DecimalField(max_digits = 12,decimal_places=2,required = False)
-  spend_cap = serializers.DecimalField(max_digits = 12,decimal_places=2,required = False)
-
+  daily_budget = serializers.IntegerField(required = False)
+  lifetime_budget = serializers.IntegerField(required = False)
+  spend_cap = serializers.IntegerField(required = False)
 
 
 class AccountSecretsSerializer(serializers.ModelSerializer):
