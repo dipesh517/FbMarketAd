@@ -66,7 +66,7 @@ class CampaignList(APIView):
         'special_ad_categories': request.data["special_ad_categories"],
       }
 
-      if request.data.get('campaign_optimization'):
+      if request.data.get('campaign_budget_optimization'):
         if request.data.get("daily_budget"):
           params['daily_budget'] = request.data['daily_budget']
 

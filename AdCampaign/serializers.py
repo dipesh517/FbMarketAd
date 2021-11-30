@@ -55,7 +55,7 @@ class CampaignSerializer(serializers.Serializer):
                         choices = SPECIAL_AD_CATEGORIES_CHOICES,allow_blank = True, required = False)
 
   # campaign_optimization_type = serializers.ChoiceField(choices = CAMPAIGN_OPTIMIZATION_TYPE_CHOICES, required = False) 
-  campaign_optimization = serializers.BooleanField(default = False,required = False)
+  campaign_budget_optimization = serializers.BooleanField(default = False,required = False)
   bid_strategy = serializers.ChoiceField(choices = BID_STRATEGY_TYPE_CHOICES, required = False) 
   daily_budget = serializers.DecimalField(max_digits = 12,decimal_places=2,required = False)
   lifetime_budget = serializers.DecimalField(max_digits = 12,decimal_places=2,required = False)
