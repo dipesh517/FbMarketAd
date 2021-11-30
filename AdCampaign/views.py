@@ -24,7 +24,10 @@ class CampaignList(APIView):
     fields = [
       'name',
       'objective',
-      'status'
+      'status',
+      'daily_budget',
+      'bid_strategy',
+      'lifetime_budget'
     ]
     params = {
       'effective_status': ['ACTIVE','PAUSED'],
@@ -48,6 +51,9 @@ class CampaignList(APIView):
     if AccountSecrets.objects.first():
       access_token = AccountSecrets.objects.first().access_token
       id = AccountSecrets.objects.first().account_id
+    
+    FacebookAdsApi.init(access_token=access_token)
+
     serializer = CampaignSerializer(data=request.data)
     if serializer.is_valid():
       print(request.data)
@@ -59,6 +65,19 @@ class CampaignList(APIView):
         'status': "PAUSED",
         'special_ad_categories': request.data["special_ad_categories"],
       }
+
+      if request.data.get('campaign_optimization'):
+        if request.data.get("daily_budget"):
+          params['daily_budget'] = request.data['daily_budget']
+
+        if request.data.get('lifetime_budget'):
+          params['lifetime_budget'] = request.data['lifetime_budget']
+        
+        if request.data.get('bid_strategy'):
+          params['bid_strategy'] = request.data['bid_strategy']
+        else:
+          params['bid_strategy'] = 'LOWEST_COST_WITHOUT_CAP'
+      
       return Response(data = AdAccount(id).create_campaign(
         fields=fields,
         params=params,
