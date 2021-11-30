@@ -59,6 +59,8 @@ class CampaignSerializer(serializers.Serializer):
   bid_strategy = serializers.ChoiceField(choices = BID_STRATEGY_TYPE_CHOICES, required = False) 
   daily_budget = serializers.DecimalField(max_digits = 12,decimal_places=2,required = False)
   lifetime_budget = serializers.DecimalField(max_digits = 12,decimal_places=2,required = False)
+  spend_cap = serializers.DecimalField(max_digits = 12,decimal_places=2,required = False)
+
 
 
 class AccountSecretsSerializer(serializers.ModelSerializer):

@@ -78,6 +78,9 @@ class CampaignList(APIView):
         else:
           params['bid_strategy'] = 'LOWEST_COST_WITHOUT_CAP'
       
+      if request.data.get('spend_cap'):
+        params['spend_cap'] = request.data['spend_cap']
+        
       return Response(data = AdAccount(id).create_campaign(
         fields=fields,
         params=params,
