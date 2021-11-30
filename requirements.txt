@@ -8,6 +8,7 @@ certifi==2021.10.8
 charset-normalizer==2.0.8
 curlify==2.2.1
 Django==3.2.9
+django-cors-headers==3.10.0
 djangorestframework==3.12.4
 facebook-business==12.0.1
 frozenlist==1.2.0

@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     #Internal Apps
     'AdCampaign',
     
-
 ]
 
 MIDDLEWARE = [
