@@ -70,7 +70,6 @@ class AdsetList(APIView):
         'billing_event': request.data['billing_event'],
         'optimization_goal': request.data['optimization_goal'],
         'campaign_id': request.data['campaign_id'],
-        'start_time': request.data['start_time'],
         'status': "PAUSED",
         'targeting': {'device_platforms':['mobile'],'facebook_positions':['feed'],'geo_locations':{'countries':['US']},'publisher_platforms':['facebook','audience_network'],'user_os':['IOS']},
       }
@@ -83,10 +82,13 @@ class AdsetList(APIView):
       
       if request.data.get('end_time'):
         params['end_time'] = request.data['end_time']
+      
+      if request.data.get('start_time'):
+        params['start_time'] = request.data['start_time']
 
       if request.data.get('bid_amount'):
         params['bid_amount'] = request.data['bid_amount']
-        
+
       return Response(data = AdAccount(id).create_ad_set(
         fields=fields,
         params=params,
