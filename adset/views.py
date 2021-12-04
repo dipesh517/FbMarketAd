@@ -45,10 +45,12 @@ class AdsetList(APIView):
       print(request.query_params['time_range'])
       params['time_range'] = request.query_params['time_range']
 
-    return Response(data = list(AdAccount(id).get_ad_sets(
+    ad_sets = Response(data = list(AdAccount(id).get_ad_sets(
       fields=fields,
       params=params,
     )))
+    print(ad_sets)
+    return ad_sets
 
   def post(self, request, format=None):
     access_token, id = None, None
