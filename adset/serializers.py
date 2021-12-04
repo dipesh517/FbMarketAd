@@ -55,7 +55,7 @@ class AdsetSerializer(serializers.Serializer):
   billing_event = serializers.ChoiceField(choices = BILLING_EVENT_CHOICES) 
   daily_budget = serializers.IntegerField(required = False)
   lifetime_budget = serializers.IntegerField(required = False)
-  # bid_amount = serializers.IntegerField(required = False)
+  bid_amount = serializers.IntegerField()
   is_dynamic_creative = serializers.BooleanField(default = False)
   start_time = serializers.CharField(required = False)
   end_time = serializers.CharField(required = False)
