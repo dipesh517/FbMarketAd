@@ -86,17 +86,13 @@ class AdsetList(APIView):
       if request.data.get('start_time'):
         params['start_time'] = request.data['start_time']
 
-      if request.data.get('bid_amount'):
-        params['bid_amount'] = request.data['bid_amount']
+      # if request.data.get('bid_amount'):
+      #   params['bid_amount'] = request.data['bid_amount']
 
       return Response(data = AdAccount(id).create_ad_set(
         fields=fields,
         params=params,
       ))
-
-      if request.data.get('bid_amount'):
-        params['bid_amount'] = request.data['bid_amount']
-
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
