@@ -58,7 +58,7 @@ class AdsetSerializer(serializers.Serializer):
   bid_amount = serializers.IntegerField()
   is_dynamic_creative = serializers.BooleanField(default = False)
   start_time = serializers.CharField()
-  end_time = serializers.CharField()
+  end_time = serializers.CharField(required = False)
 
 
 

@@ -34,7 +34,7 @@ class AdsetList(APIView):
       'billing_event'
     ]
     params = {
-      'effective_status': ['ACTIVE','PAUSED'],
+      # 'effective_status': ['ACTIVE','PAUSED'],
     }
     if request.query_params.__contains__('date_preset'):
       date_preset = request.query_params['date_preset']
@@ -72,9 +72,8 @@ class AdsetList(APIView):
         'optimization_goal': request.data['optimization_goal'],
         'campaign_id': request.data['campaign_id'],
         'start_time': request.data['start_time'],
-        'end_time': request.data['end_time'],
         'status': "PAUSED",
-
+        'targeting': {'device_platforms':['mobile'],'facebook_positions':['feed'],'geo_locations':{'countries':['US']},'publisher_platforms':['facebook','audience_network'],'user_os':['IOS']},
       }
 
       if request.data.get("daily_budget"):
@@ -82,7 +81,9 @@ class AdsetList(APIView):
 
       if request.data.get('lifetime_budget'):
         params['lifetime_budget'] = request.data['lifetime_budget']
-        
+      
+      if request.data.get('end_time'):
+        params['end_time'] = request.data['end_time']
       return Response(data = AdAccount(id).create_ad_set(
         fields=fields,
         params=params,
