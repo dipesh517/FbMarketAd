@@ -9,12 +9,14 @@ from rest_framework import status
 from .serializers import AdsetSerializer
 from AdCampaign.models import AccountSecrets
 from AdCampaign.enums import DATE_PRESET
+# from facebookads.adobjects.adset import AdSet
+
 
 class AdsetList(APIView):
   """
   List all adsets, or create a new adset.
   """
-  def get(self, request, format=None):
+  def get(self,request, format=None):
     access_token, id = None, None
     if AccountSecrets.objects.first():
       access_token = AccountSecrets.objects.first().access_token
@@ -34,7 +36,7 @@ class AdsetList(APIView):
       'billing_event'
     ]
     params = {
-      # 'effective_status': ['ACTIVE','PAUSED'],
+      'effective_status': ['ACTIVE','PAUSED'],
     }
     if request.query_params.__contains__('date_preset'):
       date_preset = request.query_params['date_preset']
@@ -45,12 +47,12 @@ class AdsetList(APIView):
       print(request.query_params['time_range'])
       params['time_range'] = request.query_params['time_range']
 
-    ad_sets = Response(data = list(AdAccount(id).get_ad_sets(
-      fields=fields,
-      params=params,
-    )))
-    print(ad_sets)
-    return ad_sets
+    account = AdAccount(id)
+    adsets = account.get_ad_sets(fields=['name'], params= params) 
+    adset_list = []  
+    for adset in adsets:
+      adset_list.append(adset) 
+    return Response(data = adset_list)
 
   def post(self, request, format=None):
     access_token, id = None, None
