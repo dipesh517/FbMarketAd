@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from facebook_business.adobjects.adaccount import AdAccount
+from facebook_business.adobjects.campaign import Campaign
 from facebook_business.api import FacebookAdsApi
 from rest_framework import status
 from .serializers import AdsetSerializer
@@ -24,7 +25,6 @@ class AdsetList(APIView):
     FacebookAdsApi.init(access_token=access_token)
     fields = [
       'name',
-      'campaign',
       'campaign_id',
       'status',
       'daily_budget',
@@ -48,10 +48,12 @@ class AdsetList(APIView):
       params['time_range'] = request.query_params['time_range']
 
     account = AdAccount(id)
-    adsets = account.get_ad_sets(fields=['name'], params= params) 
+    adsets = account.get_ad_sets(fields=fields, params= params) 
     adset_list = []  
     for adset in adsets:
+      adset["campaign_name"] = Campaign(adset['campaign_id']).api_get(fields=['name'])["name"]
       adset_list.append(adset) 
+    print ("adsets_list",adset_list)
     return Response(data = adset_list)
 
   def post(self, request, format=None):
