@@ -93,6 +93,25 @@ class AdsetList(APIView):
       if request.data.get('bid_amount'):
         params['bid_amount'] = request.data['bid_amount']
 
+      if request.data.get('device_platforms'):
+        params['targeting']['device_platforms'] = request.data['device_platforms']
+      
+      if request.data.get('publisher_platforms'):
+        params['targeting']['publisher_platforms'] = request.data['publisher_platforms']
+      
+      if request.data.get('age_min'):
+        params['targeting']['age_min'] = request.data['age_min']
+
+      if request.data.get('age_max'):
+        params['targeting']['age_max'] = request.data['age_max']
+
+      if request.data.get('countries'):
+        params['targeting']['geo_locations']['countries'] = request.data['countries']
+
+      if request.data.get('genders'):
+        params['targeting']['genders'] = request.data['genders']
+
+
       print(params)
       return Response(data = AdAccount(id).create_ad_set(
         fields=fields,

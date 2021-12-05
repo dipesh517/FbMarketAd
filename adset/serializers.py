@@ -8,6 +8,23 @@ ADSET_STATUS_CHOICES =(
   ("ARCHIVED", "ARCHIVED")
 )
 
+DEVICE_PLATFORM_CHOICES =( 
+  ("desktop", "desktop"), 
+  ("mobile", "mobile")
+)
+
+PUBLISHER_PLATFORM_CHOICES = (
+  ("facebook","facebook"),
+  ("audience_network","audience_network"),
+  ("instagram","instagram"),
+  ("messenger","messenger")
+)
+
+GENDER_CHOICES = (
+  (0,0),
+  (1,1),
+  (2,2)
+)
 OPTIMIZATION_GOAL_CHOICES =( 
   ("NONE", "NONE"), 
   ("APP_INSTALLS","APP_INSTALLS"), 
@@ -47,6 +64,7 @@ BILLING_EVENT_CHOICES = (
   ("LISTING_INTERACTION","LISTING_INTERACTION")
 )
 
+
 class AdsetSerializer(serializers.Serializer):
   name = serializers.CharField()
   campaign_id = serializers.IntegerField(required = True)
@@ -59,6 +77,16 @@ class AdsetSerializer(serializers.Serializer):
   is_dynamic_creative = serializers.BooleanField(default = False)
   start_time = serializers.CharField(required = False)
   end_time = serializers.CharField(required = False)
+  countries = serializers.ListField(     
+    child = serializers.CharField(max_length = 2), allow_empty = True
+  )
+  age_max = serializers.IntegerField(required = False)
+  age_min = serializers.IntegerField(required = False)
+  genders = serializers.ChoiceField(choices = GENDER_CHOICES, required = False)
+  device_platforms = serializers.MultipleChoiceField(
+                        choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
+  publisher_platforms = serializers.MultipleChoiceField(
+                        choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
 
 
 
