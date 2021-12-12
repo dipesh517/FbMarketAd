@@ -45,7 +45,8 @@ INSTALLED_APPS = [
 
     #Internal Apps
     'AdCampaign',
-    'adset'
+    'adset',
+    'ads'
     
 ]
 
