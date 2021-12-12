@@ -10,7 +10,7 @@ from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign
 from facebook_business.api import FacebookAdsApi
 from rest_framework import status
-from .serializers import AdImageSerializer, AdCreativeSerializer, AdSerializer
+from .serializers import AdCreativeSerializer, AdSerializer
 from AdCampaign.models import AccountSecrets
 from AdCampaign.enums import DATE_PRESET
 from facebook_business.adobjects.adimage import AdImage
@@ -44,19 +44,26 @@ class AdCreative(APIView):
       image.remote_create()
 
       imageHash = image[AdImage.Field.hash]
-      
-      creative = AdCreative(parent_id=id)
-      creative[AdCreative.Field.title] = request.data['title']
-      creative[AdCreative.Field.body] = request.data['body']
-      creative[AdCreative.Field.image_hash] = imageHash
-      creative.remote_create()
 
-      response = {
-        "success": True,
-        "id": creative[AdCreative.Field.id]
+      fields = [
+      ]
+      params = {
+      'name': request.data['name'],
+      'object_story_spec': {
+        'page_id': request.data['pageId'],
+        'link_data':{
+          'image_hash':imageHash,
+          'link':'https://www.facebook.com/' + request.data['pageId'],
+          'message':request.data['message']
+          }
+        },
       }
-      return Response(data = response)
-    
+
+      return Response(data = AdAccount(id).create_ad_creative(
+        fields=fields,
+        params=params,
+      ))
+          
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

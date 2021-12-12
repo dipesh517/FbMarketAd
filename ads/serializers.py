@@ -1,9 +1,9 @@
 from rest_framework import serializers
   
 class AdCreativeSerializer(serializers.Serializer):
-  title = serializers.CharField()
-  body = serializers.CharField()
-  # imageHash = serializers.CharField()
+  pageId = serializers.CharField()
+  name = serializers.CharField()
+  message = serializers.CharField()
   image = serializers.CharField()
   
 class AdSerializer(serializers.Serializer):
