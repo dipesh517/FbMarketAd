@@ -70,6 +70,47 @@ class AdCreative(APIView):
 
 class AdsList(APIView):
 
+  def get(self,request, format=None):
+    access_token, id = None, None
+    if AccountSecrets.objects.first():
+      access_token = AccountSecrets.objects.first().access_token
+      id = AccountSecrets.objects.first().account_id
+    FacebookAdsApi.init(access_token=access_token)
+    fields = [
+      'id',
+      'name',
+      'created_time',
+      'updated_time',
+      'status',
+      'effective_status',
+      'bid_amount',
+    ]
+    params = {
+    }
+    if request.query_params.__contains__('date_preset'):
+      date_preset = request.query_params['date_preset']
+      if DATE_PRESET.has_value(date_preset):
+        params['date_preset'] = date_preset
+
+    if request.query_params.__contains__('time_range'):
+      print(request.query_params['time_range'])
+      params['time_range'] = request.query_params['time_range']
+
+    account = AdAccount(id)
+    ads = account.get_ads(fields=fields, params = params)
+    ads_list = []  
+    for ad in ads:
+      # ad["adcreative_name"] = Campaign(adset['campaign_id']).api_get(fields=['name'])["name"]
+      fields = ['reach', 'spend', 'frequency', 'adset_name']
+      ad_insight = Ad(ad['id']).get_insights_async(fields = fields)
+      ad['reach'] = ad_insight['reach']
+      ad['frequency'] = ad_insight['frequency']
+      ad['spend'] = ad_insight['spend']
+      ad['adset_name'] = ad_insight['adset_name']
+      ads_list.append(ad) 
+    print ("ads_list",ads_list)
+    return Response(data = ads_list)
+
   def post(self, request, format=None):
     access_token, id = None, None
     if AccountSecrets.objects.first():
