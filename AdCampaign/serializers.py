@@ -46,7 +46,7 @@ SPECIAL_AD_CATEGORIES_CHOICES = (
 )
 
 
-class CampaignSerializer(serializers.Serializer):
+class CampaignCreateSerializer(serializers.Serializer):
   # initialize fields
   name = serializers.CharField()
   # status = serializers.ChoiceField(choices = CAMPAIGN_STATUS_CHOICES) 
@@ -61,6 +61,20 @@ class CampaignSerializer(serializers.Serializer):
   lifetime_budget = serializers.IntegerField(required = False)
   spend_cap = serializers.IntegerField(required = False)
 
+class CampaignUpdateSerializer(serializers.Serializer):
+  # initialize fields
+  name = serializers.CharField()
+  status = serializers.ChoiceField(choices = CAMPAIGN_STATUS_CHOICES) 
+  objective = serializers.ChoiceField(choices = CAMPAIGN_OBJECTIVE_CHOICES)
+  special_ad_categories = serializers.MultipleChoiceField(
+                        choices = SPECIAL_AD_CATEGORIES_CHOICES,allow_blank = True, required = False)
+
+  # campaign_optimization_type = serializers.ChoiceField(choices = CAMPAIGN_OPTIMIZATION_TYPE_CHOICES, required = False) 
+  campaign_budget_optimization = serializers.BooleanField(default = False,required = False)
+  bid_strategy = serializers.ChoiceField(choices = BID_STRATEGY_TYPE_CHOICES, required = False) 
+  daily_budget = serializers.IntegerField(required = False)
+  lifetime_budget = serializers.IntegerField(required = False)
+  spend_cap = serializers.IntegerField(required = False)
 
 class AccountSecretsSerializer(serializers.ModelSerializer):
   class Meta:

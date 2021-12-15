@@ -8,7 +8,7 @@ from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign
 from facebook_business.api import FacebookAdsApi
 from rest_framework import status
-from .serializers import CampaignSerializer, AccountSecretsSerializer
+from .serializers import CampaignCreateSerializer, AccountSecretsSerializer, CampaignUpdateSerializer
 from .enums import DATE_PRESET
 from .models import AccountSecrets
 
@@ -55,7 +55,7 @@ class CampaignList(APIView):
     
     FacebookAdsApi.init(access_token=access_token)
 
-    serializer = CampaignSerializer(data=request.data)
+    serializer = CampaignCreateSerializer(data=request.data)
     if serializer.is_valid():
       print(request.data)
       fields = [
@@ -125,7 +125,46 @@ class CampaignDetail(APIView):
     pass
 
   def put(self, request, pk, format=None):
-    pass
+    access_token, id = None, None
+    if AccountSecrets.objects.first():
+      access_token = AccountSecrets.objects.first().access_token
+      id = AccountSecrets.objects.first().account_id
+    
+    FacebookAdsApi.init(access_token=access_token)
+
+    serializer = CampaignUpdateSerializer(data=request.data)
+    if serializer.is_valid():
+      print(request.data)
+      fields = [
+      ]
+      params = {
+        'name': request.data["name"],
+        'objective': request.data["objective"],
+        'status': request.data["status"],
+        'special_ad_categories': request.data["special_ad_categories"],
+      }
+
+      if request.data.get('campaign_budget_optimization'):
+        if request.data.get("daily_budget"):
+          params['daily_budget'] = request.data['daily_budget']
+
+        if request.data.get('lifetime_budget'):
+          params['lifetime_budget'] = request.data['lifetime_budget']
+        
+        if request.data.get('bid_strategy'):
+          params['bid_strategy'] = request.data['bid_strategy']
+        else:
+          params['bid_strategy'] = 'LOWEST_COST_WITHOUT_CAP'
+      
+      if request.data.get('spend_cap'):
+        params['spend_cap'] = request.data['spend_cap']
+        
+      return Response(data = Campaign(pk).api_update(
+        fields=fields,
+        params=params,
+      ))
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
   def delete(self, request, pk, format=None):
     pass
