@@ -1,5 +1,6 @@
 from django.http import Http404
 from django.http.response import HttpResponse
+from FbMarketAd.utils import validate_credentials
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -100,14 +101,17 @@ class AccountSecretsView(APIView):
   def post(self, request, format=None):
     serializer = AccountSecretsSerializer(data=request.data)
     if serializer.is_valid():
-      if AccountSecrets.objects.exists():
-        a = AccountSecrets.objects.first()
-        a.access_token = request.data["access_token"]
-        a.account_id = request.data["account_id"]
-        a.save()
-      else:
-        AccountSecrets.objects.create(access_token = request.data['access_token'], account_id = request.data['account_id'])
-      return Response({"success": "true"}, status=status.HTTP_201_CREATED)
+      is_valid = validate_credentials(request.data["access_token"], request.data["account_id"])
+      if is_valid:
+        if AccountSecrets.objects.exists():
+          a = AccountSecrets.objects.first()
+          a.access_token = request.data["access_token"]
+          a.account_id = request.data["account_id"]
+          a.save()
+        else:
+          AccountSecrets.objects.create(access_token = request.data['access_token'], account_id = request.data['account_id'])
+        return Response({"success": True}, status=status.HTTP_201_CREATED)
+      return Response({"success": False}, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class CampaignDetail(APIView):
