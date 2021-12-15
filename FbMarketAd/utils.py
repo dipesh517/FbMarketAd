@@ -15,6 +15,7 @@ def validate_credentials(access_token, account_id):
     users = account.get_users()
     if users:
       return True
+    return False
   except:
     return False
   
