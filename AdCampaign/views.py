@@ -110,9 +110,9 @@ class AccountSecretsView(APIView):
           a.save()
         else:
           AccountSecrets.objects.create(access_token = request.data['access_token'], account_id = request.data['account_id'])
-        return Response({"success": True}, status=status.HTTP_201_CREATED)
-      return Response({"success": False}, status=status.HTTP_400_BAD_REQUEST)
-    return Response({"success": False}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"success": True})
+      return Response({"success": False})
+    return Response({"success": False})
 
 class CampaignDetail(APIView):
   """
