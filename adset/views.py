@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign
+from facebook_business.adobjects.adset import AdSet
 from facebook_business.api import FacebookAdsApi
 from rest_framework import status
 from .serializers import AdsetSerializer
@@ -75,7 +76,6 @@ class AdsetList(APIView):
         'optimization_goal': request.data['optimization_goal'],
         'campaign_id': request.data['campaign_id'],
         'status': "PAUSED",
-        'targeting': {'device_platforms':['mobile'],'facebook_positions':['feed'],'geo_locations':{'countries':['US']},'publisher_platforms':['facebook','audience_network'],'user_os':['IOS']},
       }
 
       if request.data.get("daily_budget"):
@@ -120,3 +120,83 @@ class AdsetList(APIView):
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class AdsetDetail(APIView):
+  """
+  Retrieve, update or delete a adset instance.
+  """
+  # def get(self, request, pk, format=None):
+  #   pass
+
+  def get(self, request, pk, format=None):
+    try:
+  
+      access_token, id = None, None
+      if AccountSecrets.objects.first():
+        access_token = AccountSecrets.objects.first().access_token
+        id = AccountSecrets.objects.first().account_id
+      
+      FacebookAdsApi.init(access_token=access_token)
+      fields = [
+        'name',
+        'campaign_id',
+        'status',
+        'daily_budget',
+        'lifetime_budget',
+        'optimization_goal',
+        'bid_amount',
+        'start_time',
+        'end_time',
+        'billing_event',
+        'targeting'
+      ]
+      response = AdSet(pk).api_get(fields=fields, params=None)
+      response["campaign_name"] = Campaign(response['campaign_id']).api_get(fields=['name'])["name"]
+      return Response(data = response)
+    except:
+      raise Http404
+
+
+  # def put(self, request, pk, format=None):
+  #   access_token, id = None, None
+  #   if AccountSecrets.objects.first():
+  #     access_token = AccountSecrets.objects.first().access_token
+  #     id = AccountSecrets.objects.first().account_id
+    
+  #   FacebookAdsApi.init(access_token=access_token)
+
+  #   serializer = CampaignUpdateSerializer(data=request.data)
+  #   if serializer.is_valid():
+  #     print(request.data)
+  #     fields = [
+  #     ]
+  #     params = {
+  #       'name': request.data["name"],
+  #       'objective': request.data["objective"],
+  #       'status': request.data["status"],
+  #       'special_ad_categories': request.data["special_ad_categories"],
+  #     }
+
+  #     if request.data.get('campaign_budget_optimization'):
+  #       if request.data.get("daily_budget"):
+  #         params['daily_budget'] = request.data['daily_budget']
+
+  #       if request.data.get('lifetime_budget'):
+  #         params['lifetime_budget'] = request.data['lifetime_budget']
+        
+  #       if request.data.get('bid_strategy'):
+  #         params['bid_strategy'] = request.data['bid_strategy']
+  #       else:
+  #         params['bid_strategy'] = 'LOWEST_COST_WITHOUT_CAP'
+      
+  #     if request.data.get('spend_cap'):
+  #       params['spend_cap'] = request.data['spend_cap']
+        
+  #     return Response(data = Campaign(pk).api_update(
+  #       fields=fields,
+  #       params=params,
+  #     ))
+    
+  #   return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def delete(self, request, pk, format=None):
+    pass
