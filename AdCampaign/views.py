@@ -11,6 +11,8 @@ from rest_framework import status
 from .serializers import CampaignCreateSerializer, AccountSecretsSerializer, CampaignUpdateSerializer
 from .enums import DATE_PRESET
 from .models import AccountSecrets
+from django.http import Http404
+
 
 class CampaignList(APIView):
   """
@@ -118,11 +120,34 @@ class CampaignDetail(APIView):
   """
   Retrieve, update or delete a campaign instance.
   """
-  def get_object(self, pk):
-    pass
+  # def get(self, request, pk, format=None):
+  #   pass
 
   def get(self, request, pk, format=None):
-    pass
+    try:
+  
+      access_token, id = None, None
+      if AccountSecrets.objects.first():
+        access_token = AccountSecrets.objects.first().access_token
+        id = AccountSecrets.objects.first().account_id
+      
+      FacebookAdsApi.init(access_token=access_token)
+      fields = [
+        'name',
+        'objective',
+        'status',
+        'daily_budget',
+        'bid_strategy',
+        'lifetime_budget',
+        'special_ad_categories',
+        'spend_cap'
+      ]
+      return Response(data = Campaign(pk).api_get(
+          fields=fields, params = None
+      ))
+    except:
+      raise Http404
+
 
   def put(self, request, pk, format=None):
     access_token, id = None, None
