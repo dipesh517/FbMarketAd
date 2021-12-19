@@ -102,7 +102,7 @@ class AdsList(APIView):
     for ad in ads:
       # ad["adcreative_name"] = Campaign(adset['campaign_id']).api_get(fields=['name'])["name"]
       fields = ['reach', 'spend', 'frequency', 'adset_name']
-      ad_insight = Ad(ad['id']).get_insights_async(fields = fields)
+      ad_insight = Ad(ad['id']).get_insights(fields = fields)
       ad['reach'] = ad_insight['reach']
       ad['frequency'] = ad_insight['frequency']
       ad['spend'] = ad_insight['spend']
