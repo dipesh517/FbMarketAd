@@ -13,7 +13,9 @@ def validate_credentials(access_token, account_id):
     
     FacebookAdsApi.init(access_token=access_token)
     account = AdAccount(account_id)
+    account.remote_read(fields=[AdAccount.Field.id, AdAccount.Field.account_id])
     if account:
+      print("account>>>",account)
       return True
     return False
     # users = account.get_users()
