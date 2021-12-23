@@ -66,7 +66,7 @@ class CampaignList(APIView):
         'name': request.data["name"],
         'objective': request.data["objective"],
         'status': "PAUSED",
-        'special_ad_categories': request.data["special_ad_categories"],
+        # 'special_ad_categories': request.data["special_ad_categories']
       }
 
       if request.data.get('campaign_budget_optimization'):
@@ -83,7 +83,12 @@ class CampaignList(APIView):
       
       if request.data.get('spend_cap'):
         params['spend_cap'] = request.data['spend_cap']
-        
+      
+      if request.data.get('special_ad_categories'):
+        params['special_ad_categories'] = request.data['special_ad_categories']
+      else:
+        params['special_ad_categories'] = ['NONE']
+
       return Response(data = AdAccount(id).create_campaign(
         fields=fields,
         params=params,

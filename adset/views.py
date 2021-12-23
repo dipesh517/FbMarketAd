@@ -67,7 +67,7 @@ class AdsetList(APIView):
 
     serializer = AdsetSerializer(data=request.data)
     if serializer.is_valid():
-      print(request.data)
+      print("serializer data>>>",request.data)
       fields = [
       ]
       params = {
@@ -76,6 +76,8 @@ class AdsetList(APIView):
         'optimization_goal': request.data['optimization_goal'],
         'campaign_id': request.data['campaign_id'],
         'status': "PAUSED",
+        'targeting': {},
+
       }
 
       if request.data.get("daily_budget"):
@@ -94,25 +96,24 @@ class AdsetList(APIView):
         params['bid_amount'] = request.data['bid_amount']
 
       if request.data.get('device_platforms'):
-        params['targeting']['device_platforms'] = request.data['device_platforms']
+        params['targeting']['device_platforms'] = request.data.get('device_platforms')
       
       if request.data.get('publisher_platforms'):
-        params['targeting']['publisher_platforms'] = request.data['publisher_platforms']
+        params['targeting']['publisher_platforms'] = request.data.get('publisher_platforms')
       
       if request.data.get('age_min'):
-        params['targeting']['age_min'] = request.data['age_min']
+        params['targeting']['age_min'] = request.data.get('age_min')
 
       if request.data.get('age_max'):
-        params['targeting']['age_max'] = request.data['age_max']
+        params['targeting']['age_max'] = request.data.get('age_max')
 
       if request.data.get('countries'):
-        params['targeting']['geo_locations']['countries'] = request.data['countries']
+        params['targeting']['geo_locations'] = {"countries": request.data.get('countries')} 
 
       if request.data.get('genders'):
-        params['targeting']['genders'] = request.data['genders']
+        params['targeting']['genders'] = request.data.get('genders')
 
-
-      print(params)
+      print("params>>>",params)
       return Response(data = AdAccount(id).create_ad_set(
         fields=fields,
         params=params,

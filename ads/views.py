@@ -15,6 +15,7 @@ from AdCampaign.models import AccountSecrets
 from AdCampaign.enums import DATE_PRESET
 from facebook_business.adobjects.adimage import AdImage
 from facebook_business.adobjects.ad import Ad
+from facebook_business.adobjects.adset import AdSet
 from facebook_business.adobjects.adcreative import AdCreative
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -84,6 +85,9 @@ class AdsList(APIView):
       'status',
       'effective_status',
       'bid_amount',
+      'adset_id',
+      'campaign_id',
+      'creative'
     ]
     params = {
     }
@@ -98,15 +102,27 @@ class AdsList(APIView):
 
     account = AdAccount(id)
     ads = account.get_ads(fields=fields, params = params)
+    print("ads>>>", ads)
     ads_list = []  
     for ad in ads:
-      # ad["adcreative_name"] = Campaign(adset['campaign_id']).api_get(fields=['name'])["name"]
-      fields = ['reach', 'spend', 'frequency', 'adset_name']
-      ad_insight = Ad(ad['id']).get_insights(fields = fields)
-      ad['reach'] = ad_insight['reach']
-      ad['frequency'] = ad_insight['frequency']
-      ad['spend'] = ad_insight['spend']
-      ad['adset_name'] = ad_insight['adset_name']
+      print("creative_id>>>",ad['creative']['id'])
+      if ad['creative']:
+        creative_id = ad['creative']['id']
+        for adcreative in list(Ad(ad['id']).get_ad_creatives(fields=['name'])):
+          if adcreative['id'] == creative_id :
+            ad['adcreative_name'] = adcreative['name']
+            break;
+        
+      ad['campaign_name'] = Campaign(ad['campaign_id']).api_get(fields=['name'])["name"]
+      ad['adset_name'] = AdSet(ad['adset_id']).api_get(fields=['name'])['name']
+      fields = ['reach', 'spend', 'frequency']
+      print("ad>>",ad['id'])
+      ad_insight = Ad(ad['id']).get_insights(fields=fields)
+      print("ads_insights >>>", list(ad_insight))
+      if ad_insight:
+        ad['reach'] = ad_insight['reach']
+        ad['frequency'] = ad_insight['frequency']
+        ad['spend'] = ad_insight['spend']
       ads_list.append(ad) 
     print ("ads_list",ads_list)
     return Response(data = ads_list)
