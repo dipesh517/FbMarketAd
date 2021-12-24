@@ -10,19 +10,39 @@ from facebook_business.adobjects.adaccount import AdAccount
 from facebook_business.adobjects.campaign import Campaign
 from facebook_business.api import FacebookAdsApi
 from rest_framework import status
-from .serializers import AdCreativeSerializer, AdSerializer
+from .serializers import AdCreativeCreateSerializer, AdSerializer,  AdCreativeUpdateSerializer
 from AdCampaign.models import AccountSecrets
 from AdCampaign.enums import DATE_PRESET
 from facebook_business.adobjects.adimage import AdImage
 from facebook_business.adobjects.ad import Ad
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.adobjects.adcreative import AdCreative
+from django.http import Http404
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-class AdCreative(APIView):
+class AdCreativeList(APIView):
+
+  def get(self,request, format=None):
+    try:
+      access_token, id = None, None
+      if AccountSecrets.objects.first():
+        access_token = AccountSecrets.objects.first().access_token
+        id = AccountSecrets.objects.first().account_id
+      FacebookAdsApi.init(access_token=access_token)
+      fields = [
+        'id',
+        'name',
+        'image_url',
+        'object_story_spec'
+      ]
+      return Response(data = list(AdAccount(id).get_ad_creatives(fields=fields)))
+    except:
+      return Http404
+
 
   def post(self, request, format=None):
     access_token, id = None, None
@@ -32,7 +52,7 @@ class AdCreative(APIView):
     
     FacebookAdsApi.init(access_token=access_token)
 
-    serializer = AdCreativeSerializer(data=request.data)
+    serializer = AdCreativeCreateSerializer(data=request.data)
     if serializer.is_valid():
       
       ad_image_path = os.path.join(BASE_DIR, "static","images",'ad_image.jpeg')
@@ -66,7 +86,75 @@ class AdCreative(APIView):
       ))
           
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+  
+class AdCreativeDetail(APIView):
+  def get(self, request, pk, format=None):
+    try:
+      access_token, id = None, None
+      if AccountSecrets.objects.first():
+        access_token = AccountSecrets.objects.first().access_token
+        id = AccountSecrets.objects.first().account_id
+      
+      FacebookAdsApi.init(access_token=access_token)
+      fields = [
+        'name',
+        'image_url',
+        'object_story_spec'
+      ]
+      return Response(data = AdCreative(pk).api_get(
+          fields=fields, params = None
+      ))
+    except:
+      raise Http404
 
+  def put(self, request, pk, format=None):
+    access_token, id = None, None
+    if AccountSecrets.objects.first():
+      access_token = AccountSecrets.objects.first().access_token
+      id = AccountSecrets.objects.first().account_id
+    
+    FacebookAdsApi.init(access_token=access_token)
+
+    serializer = AdCreativeUpdateSerializer(data=request.data)
+    if serializer.is_valid():
+      print(request.data)
+      adcreative = AdCreative(pk).api_get(fields= ['name', 'object_story_spec'])
+      print("ad_creative>>",adcreative)
+      if adcreative:
+        params = {
+        'name': adcreative['name'],
+        'object_story_spec': adcreative['object_story_spec']
+        }
+
+        if request.data.get('name'):
+          params['name'] = request.data['name']
+        if request.data.get('image'):
+          ad_image_path = os.path.join(BASE_DIR, "static","images",'ad_image.jpeg')
+          image_64_decode = base64.b64decode(request.data['image']) 
+          image_result = open(ad_image_path , 'wb') # create a writable image and write the decoding result
+          image_result.write(image_64_decode)
+
+          image = AdImage(parent_id=id)
+          image[AdImage.Field.filename] = ad_image_path
+          image.remote_create()
+
+          imageHash = image[AdImage.Field.hash]
+          params['object_story_spec']['link_data']['image_hash'] = imageHash
+
+        if request.data.get('message'):
+          params['object_story_spec']['link_data']['message'] = request.data['message']
+        
+        return Response(data = AdCreative(pk).api_update(
+          fields= [],
+          params=params,
+        ))
+      else:
+        raise Http404
+        
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  def delete(self, request, pk, format=None):
+    pass
 
 
 class AdsList(APIView):
@@ -150,4 +238,5 @@ class AdsList(APIView):
         params=params,
       ))
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 

@@ -65,7 +65,7 @@ BILLING_EVENT_CHOICES = (
 )
 
 
-class AdsetSerializer(serializers.Serializer):
+class AdsetCreateSerializer(serializers.Serializer):
   name = serializers.CharField()
   campaign_id = serializers.IntegerField(required = True)
   # status = serializers.ChoiceField(choices = ADSET_STATUS_CHOICES, required = False) 
@@ -88,7 +88,28 @@ class AdsetSerializer(serializers.Serializer):
   publisher_platforms = serializers.MultipleChoiceField(
                         choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
 
-
+class AdsetUpdateSerializer(serializers.Serializer):
+  name = serializers.CharField()
+  # campaign_id = serializers.IntegerField(required = True)
+  status = serializers.ChoiceField(choices = ADSET_STATUS_CHOICES, required = False) 
+  optimization_goal = serializers.ChoiceField(choices = OPTIMIZATION_GOAL_CHOICES, required = False) 
+  billing_event = serializers.ChoiceField(choices = BILLING_EVENT_CHOICES, required = False) 
+  daily_budget = serializers.IntegerField(required = False)
+  lifetime_budget = serializers.IntegerField(required = False)
+  bid_amount = serializers.IntegerField(required = False)
+  is_dynamic_creative = serializers.BooleanField(default = False)
+  start_time = serializers.CharField(required = False)
+  end_time = serializers.CharField(required = False)
+  countries = serializers.ListField(     
+    child = serializers.CharField(max_length = 2), allow_empty = True, required = False
+  )
+  age_max = serializers.IntegerField(required = False)
+  age_min = serializers.IntegerField(required = False)
+  genders = serializers.ChoiceField(choices = GENDER_CHOICES, required = False)
+  device_platforms = serializers.MultipleChoiceField(
+                        choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
+  publisher_platforms = serializers.MultipleChoiceField(
+                        choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
 
 
 
