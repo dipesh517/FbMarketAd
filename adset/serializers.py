@@ -82,7 +82,7 @@ class AdsetCreateSerializer(serializers.Serializer):
   )
   age_max = serializers.IntegerField(required = False)
   age_min = serializers.IntegerField(required = False)
-  genders = serializers.ChoiceField(choices = GENDER_CHOICES, required = False)
+  genders = serializers.MultipleChoiceField(choices = GENDER_CHOICES, required = False)
   device_platforms = serializers.MultipleChoiceField(
                         choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
   publisher_platforms = serializers.MultipleChoiceField(
