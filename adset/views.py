@@ -38,7 +38,7 @@ class AdsetList(APIView):
       'billing_event'
     ]
     params = {
-      'effective_status': ['ACTIVE','PAUSED','DELETED', 'CAMPAIGN_PAUSED', 'ARCHIVED', 'IN_PROCESS', 'WITH_ISSUES'],
+      'effective_status': ['ACTIVE','PAUSED', 'CAMPAIGN_PAUSED', 'ARCHIVED', 'IN_PROCESS', 'WITH_ISSUES'],
     }
     if request.query_params.__contains__('date_preset'):
       date_preset = request.query_params['date_preset']
