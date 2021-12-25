@@ -223,6 +223,7 @@ class AdsetDetail(APIView):
       if request.data.get('genders'):
         params['targeting']['genders'] = request.data.get('genders')
 
+      print("params>>",params)
       return Response(data = AdSet(pk).api_update(
         fields=fields,
         params=params,
