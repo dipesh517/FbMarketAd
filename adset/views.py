@@ -112,6 +112,18 @@ class AdsetList(APIView):
 
       if request.data.get('genders'):
         params['targeting']['genders'] = request.data.get('genders')
+      
+      if request.data.get('custom_locations'):
+        geo_location = {}
+        if request.data.get('latitude'):
+          geo_location['latitude'] = request.data['latitude']
+        if request.data.get('longitude'):
+          geo_location['longitude'] = request.data['longitude']
+        if request.data.get('radius'):
+          geo_location['radius'] = request.data['radius']
+        if request.data.get('distance_unit'):
+          geo_location['distance_unit'] = request.data['distance_unit']
+        params['targeting']['geo_locations'] = {"custom_locations": [geo_location]}
 
       print("params>>>",params)
       return Response(data = AdAccount(id).create_ad_set(
@@ -222,6 +234,18 @@ class AdsetDetail(APIView):
 
       if request.data.get('genders'):
         params['targeting']['genders'] = request.data.get('genders')
+      
+      if request.data.get('custom_locations'):
+        geo_location = {}
+        if request.data.get('latitude'):
+          geo_location['latitude'] = request.data['latitude']
+        if request.data.get('longitude'):
+          geo_location['longitude'] = request.data['longitude']
+        if request.data.get('radius'):
+          geo_location['radius'] = request.data['radius']
+        if request.data.get('distance_unit'):
+          geo_location['distance_unit'] = request.data['distance_unit']
+        params['targeting']['geo_locations'] = {"custom_locations": [geo_location]}
 
       print("params>>",params)
       return Response(data = AdSet(pk).api_update(

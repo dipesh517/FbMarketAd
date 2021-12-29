@@ -64,6 +64,11 @@ BILLING_EVENT_CHOICES = (
   ("LISTING_INTERACTION","LISTING_INTERACTION")
 )
 
+DISTANCE_UNIT_CHOICES = (
+  ('kilometer', 'kilometer'),
+  ('mile', 'mile')
+)
+
 
 class AdsetCreateSerializer(serializers.Serializer):
   name = serializers.CharField()
@@ -87,6 +92,12 @@ class AdsetCreateSerializer(serializers.Serializer):
                         choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
   publisher_platforms = serializers.MultipleChoiceField(
                         choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
+  custom_locations = serializers.BooleanField(default = False)
+  latitude = serializers.DecimalField(max_digits=10, decimal_places=5, required = False)
+  longitude = serializers.DecimalField(max_digits=10, decimal_places=5, required = False)
+  radius = serializers.DecimalField(max_digits=10, decimal_places=5, required = False)
+  distance_unit = serializers.ChoiceField(choices = DISTANCE_UNIT_CHOICES, default = 'mile')
+
 
 class AdsetUpdateSerializer(serializers.Serializer):
   name = serializers.CharField()
@@ -110,6 +121,12 @@ class AdsetUpdateSerializer(serializers.Serializer):
                         choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
   publisher_platforms = serializers.MultipleChoiceField(
                         choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
+  custom_locations = serializers.BooleanField(default = False)
+  latitude = serializers.DecimalField(max_digits=10, decimal_places=5, required = False)
+  longitude = serializers.DecimalField(max_digits=10, decimal_places=5, required = False)
+  radius = serializers.DecimalField(max_digits=10, decimal_places=5, required = False)
+  distance_unit = serializers.ChoiceField(choices = DISTANCE_UNIT_CHOICES, default = 'mile')
+
 
 
 
