@@ -98,7 +98,7 @@ class AdsetCreateSerializer(serializers.Serializer):
                         choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
   # custom_locations = serializers.BooleanField(default = False)
   custom_locations = serializers.ListField(
-   child= AdsetTargetingByGeoLocationSerializer, allow_empty = True, required = False
+   child= AdsetTargetingByGeoLocationSerializer(), allow_empty = True, required = False
   )
 
 class AdsetUpdateSerializer(serializers.Serializer):
@@ -125,7 +125,7 @@ class AdsetUpdateSerializer(serializers.Serializer):
                         choices = DEVICE_PLATFORM_CHOICES,allow_blank = True, required = False)
   # custom_locations = serializers.BooleanField(default = False)
   custom_locations = serializers.ListField(
-   child= AdsetTargetingByGeoLocationSerializer, allow_empty = True, required = False
+   child= AdsetTargetingByGeoLocationSerializer(), allow_empty = True, required = False
   )
 
 
