@@ -101,6 +101,7 @@ class AdCreativeDetail(APIView):
         'image_url',
         'object_story_spec'
       ]
+      print("ad preview>>>", Ad('120330001133661705').get_previews(params = {'ad_format': 'DESKTOP_FEED_STANDARD'}))
       return Response(data = AdCreative(pk).api_get(
           fields=fields, params = None
       ))

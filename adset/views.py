@@ -113,17 +113,21 @@ class AdsetList(APIView):
       if request.data.get('genders'):
         params['targeting']['genders'] = request.data.get('genders')
       
+      # if request.data.get('custom_locations'):
       if request.data.get('custom_locations'):
-        geo_location = {}
-        if request.data.get('latitude'):
-          geo_location['latitude'] = request.data['latitude']
-        if request.data.get('longitude'):
-          geo_location['longitude'] = request.data['longitude']
-        if request.data.get('radius'):
-          geo_location['radius'] = request.data['radius']
-        if request.data.get('distance_unit'):
-          geo_location['distance_unit'] = request.data['distance_unit']
-        params['targeting']['geo_locations'] = {"custom_locations": [geo_location]}
+        geo_locations = []
+        for target in request.data.get('custom_locations'):
+          geo_location = {}
+          if target.get('latitude'):
+            geo_location['latitude'] = target['latitude']
+          if target.get('longitude'):
+            geo_location['longitude'] = target['longitude']
+          if target.get('radius'):
+            geo_location['radius'] = target['radius']
+          if target.get('distance_unit'):
+            geo_location['distance_unit'] = target['distance_unit']
+          geo_locations.append(geo_location)
+        params['targeting']['geo_locations'] = {"custom_locations": geo_locations}
 
       print("params>>>",params)
       return Response(data = AdAccount(id).create_ad_set(
@@ -236,16 +240,19 @@ class AdsetDetail(APIView):
         params['targeting']['genders'] = request.data.get('genders')
       
       if request.data.get('custom_locations'):
-        geo_location = {}
-        if request.data.get('latitude'):
-          geo_location['latitude'] = request.data['latitude']
-        if request.data.get('longitude'):
-          geo_location['longitude'] = request.data['longitude']
-        if request.data.get('radius'):
-          geo_location['radius'] = request.data['radius']
-        if request.data.get('distance_unit'):
-          geo_location['distance_unit'] = request.data['distance_unit']
-        params['targeting']['geo_locations'] = {"custom_locations": [geo_location]}
+        geo_locations = []
+        for target in request.data.get('custom_locations'):
+          geo_location = {}
+          if target.get('latitude'):
+            geo_location['latitude'] = target['latitude']
+          if target.get('longitude'):
+            geo_location['longitude'] = target['longitude']
+          if target.get('radius'):
+            geo_location['radius'] = target['radius']
+          if target.get('distance_unit'):
+            geo_location['distance_unit'] = target['distance_unit']
+          geo_locations.append(geo_location)
+        params['targeting']['geo_locations'] = {"custom_locations": geo_locations}
 
       print("params>>",params)
       return Response(data = AdSet(pk).api_update(
