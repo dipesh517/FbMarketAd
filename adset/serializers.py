@@ -70,9 +70,9 @@ DISTANCE_UNIT_CHOICES = (
 )
 
 class AdsetTargetingByGeoLocationSerializer(serializers.Serializer):
-  latitude = serializers.DecimalField(max_digits=10, decimal_places=5, required = True)
-  longitude = serializers.DecimalField(max_digits=10, decimal_places=5, required = True)
-  radius = serializers.DecimalField(max_digits=10, decimal_places=5, required = True)
+  latitude = serializers.DecimalField(max_digits=20, decimal_places=10, required = True)
+  longitude = serializers.DecimalField(max_digits=20, decimal_places=10, required = True)
+  radius = serializers.DecimalField(max_digits=20, decimal_places=10, required = True)
   distance_unit = serializers.ChoiceField(choices = DISTANCE_UNIT_CHOICES, default = 'mile')
 class AdsetCreateSerializer(serializers.Serializer):
   name = serializers.CharField()
