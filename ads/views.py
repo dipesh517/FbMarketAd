@@ -157,6 +157,21 @@ class AdCreativeDetail(APIView):
   def delete(self, request, pk, format=None):
     pass
 
+class AdPreview(APIView):
+  def get(self, request, pk, format=None):
+    try:
+      access_token, id = None, None
+      if AccountSecrets.objects.first():
+        access_token = AccountSecrets.objects.first().access_token
+        id = AccountSecrets.objects.first().account_id
+      
+      FacebookAdsApi.init(access_token=access_token)
+      return Response(data = list(Ad(pk).get_previews(params = {'ad_format': 'DESKTOP_FEED_STANDARD'}))[0])
+    except:
+      raise Http404
+
+  def delete(self, request, pk, format=None):
+    pass
 
 class AdsList(APIView):
 
