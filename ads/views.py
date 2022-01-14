@@ -18,6 +18,7 @@ from facebook_business.adobjects.ad import Ad
 from facebook_business.adobjects.adset import AdSet
 from facebook_business.adobjects.adcreative import AdCreative
 from django.http import Http404
+import re
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,7 +80,6 @@ class AdCreativeList(APIView):
           }
         },
       }
-
       return Response(data = AdAccount(id).create_ad_creative(
         fields=fields,
         params=params,
@@ -101,7 +101,7 @@ class AdCreativeDetail(APIView):
         'image_url',
         'object_story_spec'
       ]
-      print("ad preview>>>", Ad('120330001133661705').get_previews(params = {'ad_format': 'DESKTOP_FEED_STANDARD'}))
+      # print("ad preview>>>", Ad('120330001133661705').get_previews(params = {'ad_format': 'DESKTOP_FEED_STANDARD'}))
       return Response(data = AdCreative(pk).api_get(
           fields=fields, params = None
       ))
@@ -166,7 +166,9 @@ class AdPreview(APIView):
         id = AccountSecrets.objects.first().account_id
       
       FacebookAdsApi.init(access_token=access_token)
-      return Response(data = list(Ad(pk).get_previews(params = {'ad_format': 'DESKTOP_FEED_STANDARD'}))[0])
+      data = list(Ad(pk).get_previews(params = {'ad_format': 'DESKTOP_FEED_STANDARD'}))[0]["body"]
+      new_data = data.replace('amp;','')
+      return Response(data = new_data)
     except:
       raise Http404
 
