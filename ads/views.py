@@ -3,6 +3,7 @@ import base64
 from pathlib import Path
 from django.http import Http404
 from django.http.response import HttpResponse
+from FbMarketAd.utils import getAdIdFromCreativeId
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -102,7 +103,7 @@ class AdCreativeDetail(APIView):
         'object_story_spec'
       ]
       # print("ad preview>>>", Ad('120330001133661705').get_previews(params = {'ad_format': 'DESKTOP_FEED_STANDARD'}))
-      return Response(data = AdCreative(pk).api_get(
+      return Response(data = AdCreative(pk).remote_read(
           fields=fields, params = None
       ))
     except:
@@ -119,32 +120,70 @@ class AdCreativeDetail(APIView):
     serializer = AdCreativeUpdateSerializer(data=request.data)
     if serializer.is_valid():
       print(request.data)
-      adcreative = AdCreative(pk).api_get(fields= ['name', 'object_story_spec'])
+      adcreative = AdCreative(pk).remote_read(fields= ['name', 'object_story_spec'])
       print("ad_creative>>",adcreative)
       if adcreative:
+        object_story_spec = dict(adcreative['object_story_spec'])
+        link_data = dict(object_story_spec['link_data'])
         params = {
         'name': adcreative['name'],
-        'object_story_spec': adcreative['object_story_spec']
+        'object_story_spec': {
+          "page_id": object_story_spec['page_id'],
+          "link_data": link_data
+          }
         }
+        print("params before>>>", params)
 
         if request.data.get('name'):
           params['name'] = request.data['name']
-        if request.data.get('image'):
-          ad_image_path = os.path.join(BASE_DIR, "static","images",'ad_image.jpeg')
-          image_64_decode = base64.b64decode(request.data['image']) 
-          image_result = open(ad_image_path , 'wb') # create a writable image and write the decoding result
-          image_result.write(image_64_decode)
 
-          image = AdImage(parent_id=id)
-          image[AdImage.Field.filename] = ad_image_path
-          image.remote_create()
+        if request.data.get('image') or request.data.get('message') != params['object_story_spec']['link_data']['message']:
+          if request.data.get('name'):
+            params['name'] = request.data['name']
+          
+          if request.data.get('message'):
+            params['object_story_spec']['link_data']['message'] = request.data['message']
+          
+          if request.data.get('image'):
+            ad_image_path = os.path.join(BASE_DIR, "static","images",'ad_image.jpeg')
+            image_64_decode = base64.b64decode(request.data['image']) 
+            image_result = open(ad_image_path , 'wb') # create a writable image and write the decoding result
+            image_result.write(image_64_decode)
 
-          imageHash = image[AdImage.Field.hash]
-          params['object_story_spec']['link_data']['image_hash'] = imageHash
+            image = AdImage(parent_id=id)
+            image[AdImage.Field.filename] = ad_image_path
+            image.remote_create()
 
-        if request.data.get('message'):
-          params['object_story_spec']['link_data']['message'] = request.data['message']
-        
+            params['object_story_spec']['link_data']['image_hash'] = image[AdImage.Field.hash]
+          new_fields = [
+          ]
+          new_params = {
+          'name': params['name'],
+          'object_story_spec': {
+            'page_id': params['object_story_spec']['page_id'] ,
+            'link_data':{
+              'image_hash': params['object_story_spec']['link_data']['image_hash'],
+              'link': params['object_story_spec']['link_data']['link'],
+              'message': params['object_story_spec']['link_data']['message']
+              }
+            },
+          }
+          response = AdAccount(id).create_ad_creative(
+            fields=new_fields,
+            params=new_params,
+          )
+
+          ad_id = getAdIdFromCreativeId(pk, id, access_token)
+          print('ad_id >>>', ad_id)
+          ad = Ad(ad_id)
+          ad.remote_update(params={
+            'creative': {'creative_id': response['id']},
+          })
+          creative = AdCreative(pk)
+          creative.remote_delete()
+
+          return Response(data = response)
+      
         return Response(data = AdCreative(pk).api_update(
           fields= [],
           params=params,

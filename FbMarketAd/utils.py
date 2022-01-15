@@ -1,5 +1,6 @@
 import requests
 from facebook_business.adobjects.adaccount import AdAccount
+from facebook_business.adobjects.ad import Ad
 from facebook_business.api import FacebookAdsApi
 
 
@@ -28,3 +29,16 @@ def validate_credentials(access_token, account_id):
     print(e)
     return False
   
+
+def getAdIdFromCreativeId(creative_id, account_id, access_token):
+  FacebookAdsApi.init(access_token=access_token)
+  ad_account = AdAccount(account_id)
+  ad_iter = list(ad_account.get_ads(fields=[Ad.Field.id,Ad.Field.name, Ad.Field.creative]))
+  for ad in ad_iter:
+    if int(ad['creative']['id']) == creative_id:
+      return ad['id']
+  
+
+
+
+
